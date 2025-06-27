@@ -1,0 +1,271 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>バレエの心とカラダ占い｜あなたの踊りを守るフェアリーを診断</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Hiragino Kaku Gothic ProN', sans-serif;
+      margin: 0;
+      padding: 1em;
+      background: #fff8f5;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    h1 {
+      text-align: center;
+      color: #d85a7f;
+      font-size: 1.8em;
+    }
+
+    .step {
+      margin: 1.5em 0;
+      padding: 1em;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .item-imgs {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .item-imgs img {
+      width: 90px;
+      margin: 8px;
+      border: 3px solid transparent;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: 0.3s;
+    }
+
+    .item-imgs img.selected {
+      border-color: #ff69b4;
+      transform: scale(1.05);
+    }
+
+    select, button {
+      font-size: 1em;
+      padding: 0.5em;
+      margin: 0.5em 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      background: #ff69b4;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .result {
+      background: #fff;
+      margin-top: 2em;
+      padding: 1em;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 1em;
+      white-space: pre-line;
+    }
+
+    
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #fairyIcon img {
+
+      display: block;
+      margin: 0.8em auto 0;
+      max-width: 120px;
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 {
+        font-size: 1.4em;
+      }
+
+      .item-imgs img {
+        width: 80px;
+      }
+
+      .result {
+        font-size: 0.95em;
+      }
+    }
+
+    body { font-family: sans-serif; padding: 20px; }
+    select, button { font-size: 1em; margin: 5px; }
+    .result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+    .item-imgs img {
+      width: 100px;
+      margin: 10px;
+      border: 3px solid transparent;
+      cursor: pointer;
+      border-radius: 10px;
+    }
+    .item-imgs img.selected {
+      border-color: #ff69b4;
+    }
+  </style>
+</head>
+<body>
+  
+  <h1>バレエの心とカラダ占い</h1>
+  <p style="text-align:center; font-size: 1em; color:#555; margin-bottom: 1em;">
+    生まれた日とバレエアイテムを選ぶことで、<br>
+    あなたをそっと見守り、踊りを応援してくれるフェアリーがわかります。
+  </p>
+  <div style="text-align:center; margin-bottom:1.5em;">
+    <img src="placeholder_fairy_header.png" alt="占い紹介イメージ" style="max-width:300px; opacity:0.6; border-radius:10px;">
+  </div>
+
+
+  <p>STEP1：生まれた日を選んでください</p>
+  <label>生まれた日：
+    <select id="birthDay">
+      <option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option>
+    </select>
+  </label><br>
+
+  <p>STEP2：好きなバレエアイテムをクリックして選んでください</p>
+  <div class="item-imgs">
+    <img src="toe_shoes.png" alt="トゥシューズ" onclick="selectItem(this, 'toe')">
+    <img src="lesson_bar.png" alt="レッスンバー" onclick="selectItem(this, 'bar')">
+    <img src="leotard.png" alt="レオタード" onclick="selectItem(this, 'leotard')">
+  </div>
+
+  <p>STEP3：占いたいことを選んでください</p>
+  <label>占いたいこと：
+    <select id="timing">
+      <option value="lesson">今日のレッスン</option>
+      <option value="stage">今日の舞台</option>
+      <option value="week">今週のリズム</option>
+      <option value="rest">フェアリーからの休息メッセージ</option>
+    </select>
+  </label><br>
+
+  <button onclick="diagnose()">診断する</button>
+
+  
+  <div class="result" id="resultArea"></div>
+  <div id="fairyIcon" style="margin-top:10px;"></div>
+    
+
+  <script>
+    let selectedItem = null;
+    function selectItem(element, item) {
+      selectedItem = item;
+      const allImgs = document.querySelectorAll('.item-imgs img');
+      allImgs.forEach(img => img.classList.remove('selected'));
+      element.classList.add('selected');
+    }
+
+    const fairies = ["レッドフェアリー", "ブルーフェアリー", "ゴールドフェアリー", "グリーンフェアリー", "パープルフェアリー", "ピンクフェアリー", "ホワイトフェアリー"];
+    const messages = {
+      "レッドフェアリー": {
+        lesson: "「強さの中に、あたたかさを」\n・床を押す力を感じて\n・体幹をやさしく通す",
+        stage: "「あなたの存在が、場を動かす」\n・空間を信じて大きく動く\n・肩を力まず広げて",
+        week: "「熱を持って踊る1週間に」\n・全身の血流を意識\n・脚の付け根から動く",
+        rest: "「あなたの火を、いったん灯にして」\n・背中全体で深呼吸\n・脚の緊張をほどく"
+      },
+      "ブルーフェアリー": {
+        lesson: "「静けさの中に、研ぎ澄まされた集中を」\n・首の後ろを意識して凛と立つ\n・足の裏でバランスを感じる",
+        stage: "「静かな表現が、観る人の心を打つ」\n・目線を遠くに置く\n・体幹で呼吸を支える",
+        week: "「地に足をつけた積み重ねを」\n・毎日のストレッチを丁寧に\n・床から動きを拾う",
+        rest: "「凪のような時間が必要です」\n・腰をあたためて呼吸を整える\n・膝裏をやわらかく保つ"
+      },
+      "ゴールドフェアリー": {
+        lesson: "「自信は、内側から育つ光」\n・みぞおちの奥に光\n・足裏からエネルギー",
+        stage: "「積み重ねてきたものが光る」\n・胸の奥に光源\n・首まわりを自由に",
+        week: "「失敗しても光は消えない」\n・足裏で床を感じる\n・手先に感情をのせる",
+        rest: "「十分に光っている」\n・胸に手を当てて呼吸\n・脚をゆらしてリラックス"
+      },
+      "グリーンフェアリー": {
+        lesson: "「やさしい流れに軸をつくろう」\n・胸やわき腹を広げる\n・足裏で床を撫でる",
+        stage: "「踊りが心をほどく」\n・空気の柱に乗る\n・手先で気持ちを運ぶ",
+        week: "「やさしく育てていこう」\n・呼吸と動きをつなぐ\n・背中腰を回す",
+        rest: "「深呼吸で整う」\n・胸と背中に呼吸\n・膝をゆらしてリラックス"
+      },
+      "パープルフェアリー": {
+        lesson: "「感性に輪郭を」\n・意図を込める\n・骨盤の重さを感じる",
+        stage: "「誰かの心を救う」\n・足裏から空間へ\n・感情を表情へ",
+        week: "「ためらわず試そう」\n・目線に感情\n・土踏まずを意識",
+        rest: "「夢は休んで育つ」\n・指先を触れ合わせて呼吸\n・骨盤をゆらす"
+      },
+      "ピンクフェアリー": {
+        lesson: "「やさしさの芯を見つけて」\n・胸をひらく\n・手先に気持ちをのせる",
+        stage: "「心に触れる踊り」\n・背中に空間\n・呼吸を手足へ",
+        week: "「満たすことを選んで」\n・胸に手を当てて呼吸\n・ほっとする動きを",
+        rest: "「休むことはやさしさ」\n・重さを感じる\n・手足をあたためる"
+      },
+      "ホワイトフェアリー": {
+        lesson: "「丁寧に向き合おう」\n・首を長く\n・骨盤の上に頭",
+        stage: "「静けさが美しさになる」\n・肋骨に空間\n・縦の軸を通す",
+        week: "「静かに磨けば光る」\n・丁寧なバーレッスン\n・1mmの意識を育てる",
+        rest: "「余白に美が宿る」\n・肩甲骨をゆるめる\n・白い光を呼吸に"
+      }
+    };
+
+    function diagnose() {
+      const day = parseInt(document.getElementById('birthDay').value);
+      const item = selectedItem;
+      const timing = document.getElementById('timing').value;
+
+      if (!item) {
+        alert("バレエアイテムを1つ選んでください");
+        return;
+      }
+
+      const birthIndex = day % 7;
+      const itemAdd = item === "bar" ? 1 : item === "leotard" ? 2 : 0;
+      const fairyIndex = (birthIndex + itemAdd) % 7;
+      const fairy = fairies[fairyIndex];
+
+      const message = messages[fairy]?.[timing] || "このフェアリーのメッセージは準備中です。";
+
+      
+      const iconMap = {
+        "レッドフェアリー": "fairy_red.png",
+        "ブルーフェアリー": "fairy_blue.png",
+        "ゴールドフェアリー": "fairy_gold.png",
+        "グリーンフェアリー": "fairy_green.png",
+        "パープルフェアリー": "fairy_purple.png",
+        "ピンクフェアリー": "fairy_pink.png",
+        "ホワイトフェアリー": "fairy_white.png"
+      };
+      const iconHTML = `<img src="${iconMap[fairy]}" alt="${fairy}" style="max-width:120px; border-radius:10px;">`;
+      document.getElementById("fairyIcon").innerHTML = iconHTML;
+      document.getElementById("fairyIcon").firstChild.classList.add("fade-in");
+
+      document.getElementById("resultArea").classList.add("fade-in");
+      document.getElementById("resultArea").innerText = `あなたのフェアリーは「${fairy}」\n\n${message}`;
+    }
+  </script>
+
+  <div style="text-align:center; margin-top: 2em; padding-top: 1em; border-top: 1px solid #ccc;">
+    <p style="font-size: 0.95em;">もっとバレエの応援がほしいあなたへ</p>
+    <p>
+      <a href="https://goengo.base.shop" target="_blank" style="color: #d85a7f; text-decoration: none; font-weight: bold;">🛒 診断PDFはこちら（BASE）</a>
+    </p>
+    <p>
+      <a href="https://www.instagram.com/goengo_world/" target="_blank" style="color: #4078c0; text-decoration: none;">📷 Instagramを見る</a>
+    </p>
+    <p>
+      <a href="https://lin.ee/GQ6HUNv" target="_blank" style="color: #00b900; text-decoration: none;">💬 LINEでバレエまほうを受け取る</a>
+    </p>
+  </div>
+</body>
+
+</html>
